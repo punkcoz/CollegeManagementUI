@@ -1,0 +1,11 @@
+.text-muted {
+    --bs-text-opacity: 1;
+    color: white!important;
+    margin-right: 20px;
+}
+
+footer {
+    position: fixed;
+    bottom: -5%;
+    width: 100%;
+}

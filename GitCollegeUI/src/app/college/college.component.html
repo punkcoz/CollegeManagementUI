@@ -1,0 +1,95 @@
+<div class="row mx-2 my-3">
+    <div class="col-md-8">
+        <h3 style="margin-left: 99px;">All College Records</h3>
+    </div>
+    <div class="col-md-2">
+        <div class="input-group">
+            <div class="form-outline">
+                <input type="text" class="form-control" placeholder="Type To Search" [(ngModel)]="collegesearch"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <button type="button" class="btn bg-primary" style="color: antiquewhite;" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop" (click)="addButton()">ADD NEW</button>
+    </div>
+</div>
+<div class="container">
+    <table class="table table-bordered table-responsive">
+        <tr class="bg-secondary" align="center" style="color: aliceblue;">
+            <th>Sl No.</th>
+            <th>College</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th class="col-sm-2">Action</th>
+        </tr>
+       
+        <tr align="center" *ngFor="let item of collegeDetails |filter:collegesearch | paginate: { itemsPerPage: itemsPerPage,currentPage: paginationPageNumber };let i=index;">
+            <td>{{i+1}}</td>
+            <td>{{item.collegename}}</td>
+            <td>{{item.collegelocation}}</td>
+            <td>{{item.collegedetails}}</td>
+
+            <td><a type="" data-bs-toggle="modal" class="" data-bs-target="#staticBackdrop"
+                    (click)="updateCollegeRecord(item)"><i class="fa-solid fa-pen" title="Click To Edit" style="color: #ffc800;"></i></a>
+
+                    &nbsp;&nbsp;<a type="" class="" (click)="DeleteCollege(item)"><i class="fa-solid fa-trash" title="Click To Delete" style="color: #ff0000d1;"></i></a>
+
+            </td>
+        </tr>
+        
+            
+        <tr class="bg-warning" align="center" *ngIf="collegeDetails.length <= 0">No Data Found</tr>
+        
+    </table>
+    
+</div>
+<div class="mt-5 text-center" *ngIf="collegeDetails">
+    <pagination-controls class="justify-self-center" (pageChange)="paginationPageNumber = $event">
+    </pagination-controls>
+  </div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add College</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form #CollegeForm ngNativeValidate autocomplete="off" class="form form-control" formGroup="angForm" novalidate>
+                <!-- <div class="form form-control" #CollegeForm ngNativeValidate> -->
+                    <label for="College Name">College Name:</label>
+                    <input type="text" id="college_name" value="" class="form-control" name="collegeName" [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="collegeDetailsObj.collegeName" required>
+                        <br>
+                        <div *ngIf="angForm.controls['name'].invalid && (angForm.controls['name'].dirty || angForm.controls['name'].touched)" class="alert alert-danger">
+                            <div *ngIf="angForm.controls['name'].errors.required">
+                            Name is required.
+                          </div>
+                        </div>
+                        <br>
+                    <label for="College Address">College Address:</label>
+                    <input type="text" id="college_address" value="" class="form-control" name="collegeLocation" required
+                        [(ngModel)]="collegeDetailsObj.collegeLocation" [ngModelOptions]="{standalone: true}"><br><br>
+                    <label for="College Address">College Description:</label>
+                    <input type="text" id="college_address" value="" class="form-control" name="collegeDetails" required
+                        [(ngModel)]="collegeDetailsObj.collegeDetails" [ngModelOptions]="{standalone: true}" title="College Details is required"><br><br>
+                <!-- </div>  -->
+            </form>           
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!-- <button type="button" class="btn btn-info">{{saveButton}}</button> -->
+                <!-- <button type="button" class="btn btn-success" (click)="addNewCollege()" *ngIf="addMode"  data-bs-dismiss="modal">Add</button> -->
+                <button type="button" class="btn btn-success" (click)="CollegeForm.checkValidity()?addNewCollege():error()" *ngIf="addMode" >Add</button>
+                <button type="button" class="btn btn-primary" (click)="CollegeForm.checkValidity()?updateCollege(collegeDetailsObj):error()" *ngIf="!addMode" >Update</button>
+            </div>
+        
+        </div>
+    </div>
+</div>
+<!-- {{data | json }} -->
