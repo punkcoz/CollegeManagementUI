@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/GitCollegeUI/.vs
+/GitCollegeUI/node_modules/.bin
+/GitCollegeUI/node_modules
