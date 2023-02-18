@@ -1,6 +1,6 @@
 <div class="row mx-2 my-3">
     <div class="col-md-8">
-        <h3 style="margin-left: 99px;">All Department Records</h3>
+        <h4 style="margin-left: 99px;font-style: italic;">All Department</h4>
     </div>
     <div class="col-md-2">
         <div class="input-group">
@@ -11,17 +11,42 @@
     </div>
     <div class="col-md-2">
         <button type="button" class="btn bg-primary" style="color: antiquewhite;" data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop">ADD NEW</button>
+            data-bs-target="#staticBackdrop" (click)="addButton()">ADD NEW</button>
     </div>
 </div>
 <div class="container">
-    <table class="table table-bordered table-responsive">
+    <div class="row py-3">
+        <div class="col">
+            <div class="d-flex justify-content-between">
+                <span><i class="fa fa-info-circle text-primary"></i> This Table will feature List of Department.</span>
+                
+            </div>
+            <div class="row">
+                <div class="col-md-4 py-3">
+                    <label class="bg-dark py-1 px-2" style="color: antiquewhite;">Items per Page :{{itemsPerPage}}</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="col py-3" style="float: right;">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
+                            (change)="GetDepartmentAndColleges()" [checked]="true" />
+                        <label class="form-check-label px-2" for="flexRadioDefault1"> Department </label>
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" (click)="Department_LogData()"/>
+                        <label class="form-check-label px-2" for="flexRadioDefault2"> Archive Department </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <table class="table table-bordered table-responsive border">
+        <ng-container *ngIf="Departmenttoggle == true">
         <tr class="bg-secondary" align="center" style="color: aliceblue;">
-            <th>Sl No.</th>
-            <th>College</th>
-            <th>College Location</th>
-            <th>Department</th>
-            <th class="col-sm-2">Action</th>
+            <td>Sl No.</td>
+            <td>College</td>
+            <td>College Location</td>
+            <td>Department</td>
+            <td class="col-sm-2">Action</td>
         </tr>
 
         <tr align="center"
@@ -31,13 +56,37 @@
             <td>{{item.collegelocation}}</td>
             <td>{{item.departmentname}}</td>
             <td><a type="" data-bs-toggle="modal" class="" data-bs-target="#staticBackdrop"><i class="fa-solid fa-pen"
-                        title="Click To Edit" style="color: #ffc800;"></i></a>
+                        (click)="updateDepartmentRecord(item)" title="Click To Edit" style="color: #ffc800;"></i></a>
 
-                &nbsp;&nbsp;<a type="" class="" (click)="DeleteDepartment(item)"><i class="fa-solid fa-trash" title="Click To Delete"
-                        style="color: #ff0000d1;"></i></a>
+                &nbsp;&nbsp;<a type="" class="" (click)="ArchiveDepartment(item)"><i class="fas fa-archive"
+                        title="Click To Archive" style="color: #ff1800cf;"></i></a>
             </td>
         </tr>
         <tr class="bg-warning" align="center" *ngIf="getDepartmentAndCollege.length <= 0">No Data Found</tr>
+    </ng-container>
+    <ng-container *ngIf="!Departmenttoggle">
+        <tr class="bg-secondary" align="center" style="color: aliceblue;">
+            <td>Sl No.</td>
+            <td>College</td>
+            <td>College Location</td>
+            <td>Department</td>
+            <td>Archive Date</td>
+            <td class="col-sm-2">Action</td>
+        </tr>
+
+        <tr align="center" *ngFor="let item of departmentLogArray | filter:departmentSearch | paginate: { itemsPerPage: itemsPerPage,currentPage: paginationPageNumber },let i=index;">
+            <td>{{i+1}}</td>
+            <td>{{item.collegename}}</td>
+            <td>{{item.collegelocation}}</td>
+            <td>{{item.departmentname}}</td>
+            <td>{{item.department_logdatetime | date:"mediumDate"}}</td>
+            <td><a type="" class=""><i class="fas fa-redo-alt" title="Click To Restore" style="color: #ffc800;"></i></a>
+                &nbsp;&nbsp;
+                <a type="" class=""><i class="fa-solid fa-trash" title="Click To Delete" style="color: #ff0000d1;"></i></a>
+            </td>
+        </tr>
+        <tr class="bg-warning" align="center" *ngIf="getDepartmentAndCollege.length <= 0">No Data Found</tr>
+    </ng-container>
     </table>
 </div>
 <div class="mt-5 text-center">
@@ -51,31 +100,37 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Department</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{departmentModalTital}}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="form-control">
+                <form #DepartmentForm ngNativeValidate autocomplete="off" class="form form-control">
+
                     <label for="College Name">Select College</label>
-                    
-                    <select class="form-control" [(ngModel)]="departmentObj.collegeId">
+
+                    <select class="form-control" [(ngModel)]="departmentObj.collegeId"
+                        [ngModelOptions]="{standalone: true}">
                         <option value="" disabled selected>Select your option</option>
-                        <option value="{{item.collegeid}}" *ngFor="let item of getDepartmentAndCollege">{{item.collegename}}</option>
+                        <option value="{{item.collegeid}}" *ngFor="let item of getcollege">{{item.collegename}}</option>
                     </select>
                     <br><br>
                     <label for="College Address">Department Name:</label>
-                    <input type="text" id="college_address" value="" class="form-control" [(ngModel)]="departmentObj.departmentName" placeholder="Enter Department Name" name="" required>
+                    <input type="text" id="college_address" value="" class="form-control"
+                        [(ngModel)]="departmentObj.departmentName" placeholder="Enter Department Name" name=""
+                        [ngModelOptions]="{standalone: true}" required>
                     <br><br>
-                </div>
+
+                </form>
             </div>
             <div class="modal-footer">
-
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <!-- <button type="button" class="btn btn-info">{{saveButton}}</button> -->
-
-                <button type="button" class="btn btn-success" (click)="addDepartment()" *ngIf="buttonMode" data-bs-dismiss="modal">Add</button>
-                <button type="button" class="btn btn-primary" *ngIf="!buttonMode" data-bs-dismiss="modal">Update</button>
-
+                <button type="button" class="btn btn-success"
+                    (click)="DepartmentForm.checkValidity()?addDepartment():error()" *ngIf="buttonMode"
+                    data-bs-dismiss="modal">Add</button>
+                <button type="button" class="btn btn-primary"
+                    (click)="DepartmentForm.checkValidity()?updateDepartment(departmentObj):error()" *ngIf="!buttonMode"
+                    data-bs-dismiss="modal">Update</button>
             </div>
         </div>
     </div>

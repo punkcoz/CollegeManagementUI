@@ -12,6 +12,8 @@ import { CollegeComponent } from './college/college.component';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgxPaginationModule } from 'ngx-pagination';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,7 +21,6 @@ import { NgxPaginationModule } from 'ngx-pagination';
     CourseComponent,
     StudentComponent,
     CollegeComponent
-    
   ],
   imports: [
     BrowserModule,
@@ -28,6 +29,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     FormsModule,
     Ng2SearchPipeModule,
     NgxPaginationModule
+
     ],
   providers: [],
   bootstrap: [AppComponent]

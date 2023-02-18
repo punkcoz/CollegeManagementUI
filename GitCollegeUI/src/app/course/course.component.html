@@ -1,1 +1,119 @@
-<p>course works!</p>
+<div class="row mx-2 my-3">
+    <div class="col-md-8">
+        <h4 style="margin-left: 99px;font-style: italic;">All Course</h4>
+    </div>
+    <div class="col-md-2">
+        <div class="input-group">
+            <div class="form-outline">
+                <input type="text" class="form-control" placeholder="Type To Search" [(ngModel)]="courseSearch" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <button type="button" class="btn bg-primary" style="color: antiquewhite;" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop">ADD NEW</button>
+    </div>
+</div>
+<div class="container">
+    <div class="row py-3">
+        <div class="col">
+            <div class="d-flex justify-content-between">
+                <span><i class="fa fa-info-circle text-primary"></i> This Table will feature List of Course.</span>
+                <label class="">Items per Page : {{itemsPerPage}}</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <table class="table table-bordered table-responsive border">
+        <tr class="bg-secondary" align="center" style="color: aliceblue;">
+            <td>Sl No.</td>
+            <td>College</td>
+            <td>College Location</td>
+            <td>Department</td>
+            <td>Course</td>
+            <td class="col-sm-2">Action</td>
+        </tr>
+
+        <tr align="center"
+            *ngFor="let item of getCourseDepartmentAndCollege | filter:courseSearch | paginate: { itemsPerPage: itemsPerPage,currentPage: paginationPageNumber },let i=index;">
+            <td>{{i+1}}</td>
+            <td>{{item.collegename}}</td>
+            <td>{{item.collegelocation}}</td>
+            <td>{{item.departmentname}}</td>
+            <td>{{item.coursename}}</td>
+            <td><a type="" data-bs-toggle="modal" class="" data-bs-target="#staticBackdrop"><i class="fa-solid fa-pen" (click)="updateCourseRecord(item)"
+                        title="Click To Edit" style="color: #ffc800;"></i></a>
+
+                &nbsp;&nbsp;<a type="" class=""><i class="fa-solid fa-trash" (click)="DeleteCourse(item)" title="Click To Delete"
+                        style="color: #ff0000d1;"></i></a>
+            </td>
+        </tr>
+        <tr class="bg-warning" align="center" *ngIf="getCourseDepartmentAndCollege.length <= 0">No Data Found</tr>
+    </table>
+</div>
+<div class="mt-5 text-center">
+    <pagination-controls class="justify-self-center" (pageChange)="paginationPageNumber = $event">
+    </pagination-controls>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{courseModalTital}}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form #CourseForm ngNativeValidate autocomplete="off" class="form form-control">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="College Name">Select College</label>
+
+                            <select class="form-control" (change)="GetDepartmentForCourse($event)" [(ngModel)]="courseObj.collegeId" [ngModelOptions]="{standalone: true}">
+                        <option value="0" disabled selected>Select your option</option>
+                        <option value="{{item.collegeid}}" *ngFor="let item of collegeList">{{item.collegename}}</option>
+                    </select>
+                            
+                        </div>
+                        <br><br>
+                        <div class="col-md-6">
+                            <label for="College Address">Department Name:</label>
+                            <select class="form-control" [(ngModel)]="courseObj.departmentId" [ngModelOptions]="{standalone: true}">
+                                <option value="0" disabled selected>Select your option</option>
+                                <option value="{{item.departmentid}}"
+                                    *ngFor="let item of departmentList">
+                                    {{item.departmentname}}</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                    <br><br>
+                    <label for="College Address">Course Name:</label>
+                    <input type="text" id="college_address" value="" class="form-control" name="" required
+                        [(ngModel)]="courseObj.courseName" [ngModelOptions]="{standalone: true}"
+                        placeholder="Enter Course Name" title="Course Name required">
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!-- <button type="button" class="btn btn-info">{{saveButton}}</button> -->
+                <!-- <button type="button" class="btn btn-success" (click)="addNewCollege()" *ngIf="addMode"  data-bs-dismiss="modal">Add</button> -->
+                <button type="button" class="btn btn-success"
+                    (click)="CourseForm.checkValidity()?addNewCourse():error()" *ngIf="buttonMode" data-bs-dismiss="modal">Add</button>
+
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                    (click)="CourseForm.checkValidity()?updateCourse(courseObj):error()"
+                    *ngIf="!buttonMode">Update</button>
+            </div>
+
+        </div>
+    </div>
+    <!-- {{data | json }} -->

@@ -1,53 +1,115 @@
-<div class="row mx-2 my-3">
+<div class="row mx-3 mt-4 my-3">
     <div class="col-md-8">
-        <h3 style="margin-left: 99px;">All College Records</h3>
+        <h4 style="margin-left: 99px; font-style: italic;">All College</h4>
     </div>
     <div class="col-md-2">
         <div class="input-group">
             <div class="form-outline">
-                <input type="text" class="form-control" placeholder="Type To Search" [(ngModel)]="collegesearch"/>
+                <input type="text" class="form-control" placeholder="Type To Search" [(ngModel)]="collegesearch" />
             </div>
         </div>
     </div>
+
     <div class="col-md-2">
         <button type="button" class="btn bg-primary" style="color: antiquewhite;" data-bs-toggle="modal"
             data-bs-target="#staticBackdrop" (click)="addButton()">ADD NEW</button>
     </div>
 </div>
+
 <div class="container">
-    <table class="table table-bordered table-responsive">
-        <tr class="bg-secondary" align="center" style="color: aliceblue;">
-            <th>Sl No.</th>
-            <th>College</th>
-            <th>Location</th>
-            <th>Description</th>
-            <th class="col-sm-2">Action</th>
-        </tr>
-       
-        <tr align="center" *ngFor="let item of collegeDetails |filter:collegesearch | paginate: { itemsPerPage: itemsPerPage,currentPage: paginationPageNumber };let i=index;">
-            <td>{{i+1}}</td>
-            <td>{{item.collegename}}</td>
-            <td>{{item.collegelocation}}</td>
-            <td>{{item.collegedetails}}</td>
-
-            <td><a type="" data-bs-toggle="modal" class="" data-bs-target="#staticBackdrop"
-                    (click)="updateCollegeRecord(item)"><i class="fa-solid fa-pen" title="Click To Edit" style="color: #ffc800;"></i></a>
-
-                    &nbsp;&nbsp;<a type="" class="" (click)="DeleteCollege(item)"><i class="fa-solid fa-trash" title="Click To Delete" style="color: #ff0000d1;"></i></a>
-
-            </td>
-        </tr>
-        
-            
-        <tr class="bg-warning" align="center" *ngIf="collegeDetails.length <= 0">No Data Found</tr>
-        
-    </table>
-    
+    <div class="row py-3">
+        <div class="col">
+            <div class="d-flex justify-content-between">
+                <span><i class="fa fa-info-circle text-primary"></i> This Table will feature List of Collges.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-4 py-3">
+                    <label class="bg-dark py-1 px-2" style="color: antiquewhite;">Items per Page :
+                        {{itemsPerPage}}</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="col py-3" style="float: right;">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
+                            (change)="AllCollegeDetails()" [checked]="true" />
+                        <label class="form-check-label px-2" for="flexRadioDefault1"> College </label>
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
+                            (change)="CollegeArchive()" />
+                        <label class="form-check-label px-2" for="flexRadioDefault2"> Archive College </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="mt-5 text-center" *ngIf="collegeDetails">
+
+<div class="container">
+    <table class="table table-bordered table-responsive border">
+        <ng-container *ngIf="collegetoggle == true">
+        <tr class="bg-secondary" align="center" style="color: aliceblue;">
+            <td>Sl No.</td>
+            <td>College</td>
+            <td>Location</td>
+            <td>Description</td>
+            <td class="col-sm-2">Action</td>
+        </tr>
+        
+            <tr align="center"
+                *ngFor="let item of collegeDetails |filter:collegesearch | paginate: { itemsPerPage: itemsPerPage,currentPage: paginationPageNumber }; let i=index;">
+                <td>{{i+1}}</td>
+                <td>{{item.collegename}}</td>
+                <td>{{item.collegelocation}}</td>
+                <td>{{item.collegedetails}}</td>
+                <td><a type="" data-bs-toggle="modal" class="" data-bs-target="#staticBackdrop"
+                        (click)="updateCollegeRecord(item)"><i class="fa-solid fa-pen" title="Click To Edit"
+                            style="color: #ffc800;"></i></a>
+                    &nbsp;&nbsp;<a type="" class="" (click)="ArchiveCollege(item)"><i class="fas fa-archive"
+                            title="Click To Archive" style="color: #ff1800cf;"></i></a>
+                </td>
+            </tr>
+            <tr class="bg-warning" align="center" *ngIf="collegeDetails.length <= 0">No Data Found</tr>
+       
+        </ng-container>
+        <ng-container *ngIf="!collegetoggle">
+            <tr class="bg-secondary" align="center" style="color: aliceblue;">
+                <td>Sl No.</td>
+                <td>College</td>
+                <td>Location</td>
+                <td>Description</td>
+                <td>Archive Date</td>
+                <td class="col-sm-2">Action</td>
+            </tr>
+            <tr align="center"
+                *ngFor="let item of collegeArchive |filter:collegesearch | paginate: { itemsPerPage: itemsPerPage,currentPage: paginationPageNumber };let i=index;">
+                <td>{{i+1}}</td>
+                <td>{{item.collegename}}</td>
+                <td>{{item.collegelocation}}</td>
+                <td>{{item.collegedetails}}</td>
+                <td>{{item.college_log_date_time | date:"mediumDate"}}</td>
+                <td><a type="" class="" (click)="RestoreCollege(item)"><i class="fas fa-redo-alt" title="Click To Restore"
+                            style="color: #ffc800;"></i></a>
+                    &nbsp;&nbsp;
+                    <a type="" class="" (click)="PermanentCollegeDelete(item)"><i class="fa-solid fa-trash" title="Click To Delete" style="color: #ff0000d1;"></i></a>
+                </td>
+            </tr>
+            <tr class="bg-warning" align="center" *ngIf="collegeArchive.length <= 0">No Data Found</tr>
+        
+        </ng-container>
+       
+    </table>
+</div>
+<ng-container *ngIf="!collegetoggle">
+<div class="mt-5 text-center" *ngIf="collegeArchive">
     <pagination-controls class="justify-self-center" (pageChange)="paginationPageNumber = $event">
     </pagination-controls>
-  </div>
+</div>
+</ng-container>
+
+<ng-container *ngIf="collegetoggle">
+    <div class="mt-5 text-center" *ngIf="collegeDetails">
+        <pagination-controls class="justify-self-center" (pageChange)="paginationPageNumber = $event">
+        </pagination-controls>
+    </div>
+    </ng-container>
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -55,40 +117,40 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add College</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{collegeModelTitle}}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
+
             <div class="modal-body">
-                <form #CollegeForm ngNativeValidate autocomplete="off" class="form form-control" formGroup="angForm" novalidate>
-                <!-- <div class="form form-control" #CollegeForm ngNativeValidate> -->
+                <form #CollegeForm ngNativeValidate autocomplete="off" class="form form-control">
+                    <!-- <div class="form form-control" #CollegeForm ngNativeValidate> -->
                     <label for="College Name">College Name:</label>
-                    <input type="text" id="college_name" value="" class="form-control" name="collegeName" [ngModelOptions]="{standalone: true}"
-                        [(ngModel)]="collegeDetailsObj.collegeName" required>
-                        <br>
-                        <div *ngIf="angForm.controls['name'].invalid && (angForm.controls['name'].dirty || angForm.controls['name'].touched)" class="alert alert-danger">
-                            <div *ngIf="angForm.controls['name'].errors.required">
-                            Name is required.
-                          </div>
-                        </div>
-                        <br>
+                    <input type="text" id="college_name" value="" class="form-control" name="collegeName"
+                        [ngModelOptions]="{standalone: true}" [(ngModel)]="collegeDetailsObj.collegeName" required>
+                    <br><br>
                     <label for="College Address">College Address:</label>
-                    <input type="text" id="college_address" value="" class="form-control" name="collegeLocation" required
-                        [(ngModel)]="collegeDetailsObj.collegeLocation" [ngModelOptions]="{standalone: true}"><br><br>
+                    <input type="text" id="college_address" value="" class="form-control" name="collegeLocation"
+                        required [(ngModel)]="collegeDetailsObj.collegeLocation"
+                        [ngModelOptions]="{standalone: true}"><br><br>
                     <label for="College Address">College Description:</label>
                     <input type="text" id="college_address" value="" class="form-control" name="collegeDetails" required
-                        [(ngModel)]="collegeDetailsObj.collegeDetails" [ngModelOptions]="{standalone: true}" title="College Details is required"><br><br>
-                <!-- </div>  -->
-            </form>           
+                        [(ngModel)]="collegeDetailsObj.collegeDetails" [ngModelOptions]="{standalone: true}"
+                        title="College Details is required"><br><br>
+                    <!-- </div>  -->
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <!-- <button type="button" class="btn btn-info">{{saveButton}}</button> -->
                 <!-- <button type="button" class="btn btn-success" (click)="addNewCollege()" *ngIf="addMode"  data-bs-dismiss="modal">Add</button> -->
-                <button type="button" class="btn btn-success" (click)="CollegeForm.checkValidity()?addNewCollege():error()" *ngIf="addMode" >Add</button>
-                <button type="button" class="btn btn-primary" (click)="CollegeForm.checkValidity()?updateCollege(collegeDetailsObj):error()" *ngIf="!addMode" >Update</button>
+                <button type="button" class="btn btn-success"
+                    (click)="CollegeForm.checkValidity()?addNewCollege():error()" *ngIf="addMode"
+                    data-bs-dismiss="modal">Add</button>
+                <button type="button" class="btn btn-primary"
+                    (click)="CollegeForm.checkValidity()?updateCollege(collegeDetailsObj):error()" *ngIf="!addMode"
+                    data-bs-dismiss="modal">Update</button>
             </div>
-        
+
         </div>
     </div>
 </div>
